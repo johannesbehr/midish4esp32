@@ -1,3 +1,17 @@
+About this project:
+
+I want to port midish to esp32, because it is a really good programm to do headless midi.
+Compile it with ardunio ide / Esp32 board.
+It already makes it shell available over the serial monitor and accepts commands! 
+
+Next steps:
+- support midi in/out.
+- allow to map commands to the GPIO, e.g. have one pin to start playback and an other to stop.
+- add a small 7-Seg LED for showing the current track/beat is
+- make shell available over wlan
+...
+
+---Original midish readme ----------------------------------------------------------------------------
 Midish is an open-source MIDI sequencer/filter for Unix-like operating
 systems. Implemented as a simple command-line interpreter, it's intended to
 be lightweight, fast and reliable for real-time performance.
