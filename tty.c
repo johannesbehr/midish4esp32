@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <poll.h>
+#include "poll.h"
 #include <signal.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -1007,6 +1007,7 @@ tty_oninput(unsigned int c)
 void
 tty_winch(void)
 {
+  /*
 	struct winsize ws;
 
 	if (!tty_initialized)
@@ -1020,6 +1021,7 @@ tty_winch(void)
 		tty_twidth = 80;
 	}
 	tty_ops->resize(tty_arg, tty_twidth);
+  */
 }
 
 void

@@ -28,7 +28,7 @@
 #endif
 #include <fcntl.h>
 #include <unistd.h>
-#include <poll.h>
+#include "poll.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,6 +82,9 @@ clock_gettime(int which, struct timespec *ts)
 }
 #endif
 
+#define CLOCK_MONOTONIC 0
+#define SA_RESTART 0
+
 /*
  * handler for SIGALRM, invoked periodically
  */
@@ -109,6 +112,7 @@ mdep_sigcont(int s)
 void
 mux_mdep_open(void)
 {
+  /*
 	static struct sigaction sa;
 	struct itimerval it;
 	sigset_t set;
@@ -138,6 +142,7 @@ mux_mdep_open(void)
 		log_perror("mux_mdep_open: setitimer");
 		exit(1);
 	}
+  */
 }
 
 /*
@@ -146,6 +151,7 @@ mux_mdep_open(void)
 void
 mux_mdep_close(void)
 {
+  /*
 	struct itimerval it;
 
 	it.it_value.tv_sec = 0;
@@ -156,6 +162,7 @@ mux_mdep_close(void)
 		log_perror("mux_mdep_close: setitimer");
 		exit(1);
 	}
+  */
 }
 
 /*
@@ -166,6 +173,7 @@ mux_mdep_close(void)
 int
 mux_mdep_wait(int docons)
 {
+  
 	int i, res, revents;
 	nfds_t nfds;
 	struct pollfd *pfd, *tty_pfds, pfds[MAXFDS];
@@ -173,6 +181,7 @@ mux_mdep_wait(int docons)
 	unsigned char midibuf[MIDI_BUFSIZE];
 	long long delta_nsec;
 
+/*
 	nfds = 0;
 	if (docons && !cons_eof) {
 		tty_pfds = &pfds[nfds];		
@@ -238,59 +247,59 @@ mux_mdep_wait(int docons)
 				mux_errorcb(dev->unit);
 			}
 		}
-	}
+	}*/
 	if (mux_isopen) {
 		if (clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
 			log_perror("mux_mdep_wait: clock_gettime");
 			panic();
 		}
 
-		/*
-		 * number of micro-seconds between now and the last
-		 * time we called poll(). Warning: because of system
-		 * clock changes this value can be negative.
-		 */
+		 // number of micro-seconds between now and the last
+		 // time we called poll(). Warning: because of system
+		 // clock changes this value can be negative.
 		delta_nsec = 1000000000LL * (ts.tv_sec - ts_last.tv_sec);
 		delta_nsec += ts.tv_nsec - ts_last.tv_nsec;
 		if (delta_nsec > 0) {
 			ts_last = ts;
 			if (delta_nsec < 1000000000LL) {
-				/*
-				 * update the current position,
-				 * (time unit = 24th of microsecond)
-				 */
+				 // update the current position,
+				 // (time unit = 24th of microsecond)
 				mux_timercb(24 * delta_nsec / 1000);
 			} else {
-				/*
-				 * delta is too large (eg. the program was
-				 * suspended and then resumed), just ignore it
-				 */
+				// delta is too large (eg. the program was
+				// suspended and then resumed), just ignore it
 				log_puts("ignored huge clock delta\n");
 			}
 		}
 	}
 	log_flush();
+  /*
 	if (tty_pfds) {
+    LOG_PUTC('.');
 		if (cons_isatty) {
 			revents = tty_revents(tty_pfds);
 			if (revents & POLLHUP)
 				cons_eof = 1;
 		} else {
-			if (tty_pfds->revents & POLLIN) {
-				res = read(STDIN_FILENO, midibuf, MIDI_BUFSIZE);
-				if (res < 0) {
+			if (tty_pfds->revents & POLLIN) {*/
+				//res = read(STDIN_FILENO, midibuf, MIDI_BUFSIZE);
+        res = read(STDIN_FILENO, midibuf, MIDI_BUFSIZE);
+        
+				/*if (res < 0) {
 					cons_eof = 1;
 					log_perror("stdin");
 				} else if (res == 0) {
 					cons_eof = 1;
 					user_onchar(NULL, -1);
-				} else {
+				} else*/ 
+        if(res>0){
 					for (i = 0; i < res; i++)
 						user_onchar(NULL, midibuf[i]);
 				}
+        /*
 			}
 		}
-	}
+	}*/
 	return 1;
 }
 
@@ -348,6 +357,7 @@ cons_mdep_sigint(int s)
 void
 cons_init(struct el_ops *el_ops, void *el_arg)
 {
+  /*
 	struct sigaction sa;
 
 	cons_eof = 0;
@@ -377,11 +387,13 @@ cons_init(struct el_ops *el_ops, void *el_arg)
 		tty_reset();
 	} else
 		cons_isatty = 0;
+  */
 }
 
 void
 cons_done(void)
 {
+/*
 	struct sigaction sa;
 
 	if (cons_isatty) {
@@ -403,6 +415,7 @@ cons_done(void)
 		log_perror("cons_mdep_done: sigaction(cont)");
 		exit(1);
 	}
+  */
 }
 
 /*

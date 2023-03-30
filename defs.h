@@ -69,7 +69,7 @@
 /*
  * maximum number of events
  */
-#define DEFAULT_MAXNSEQEVS	400000
+#define DEFAULT_MAXNSEQEVS	1000//400000
 
 /*
  * maximum number of tracks
@@ -80,12 +80,12 @@
  * maximum number of filter states (roughly maximum number of
  * simultaneous notes
  */
-#define DEFAULT_MAXNSTATES	10000
+#define DEFAULT_MAXNSTATES	100 //10000 
 
 /*
  * maximum number of system exclusive messages
  */
-#define DEFAULT_MAXNSYSEXS	2000
+#define DEFAULT_MAXNSYSEXS 100//	2000
 
 /*
  * maximum number of chunks (each sysex is a set of chunks)

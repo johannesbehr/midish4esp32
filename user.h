@@ -17,6 +17,10 @@
 #ifndef MIDISH_USER_H
 #define MIDISH_USER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct song;
 struct songtrk;
 struct songchan;
@@ -235,5 +239,9 @@ unsigned user_func_ctlconf(struct exec *, struct data **);
 unsigned user_func_ctlconfx(struct exec *, struct data **);
 unsigned user_func_ctlunconf(struct exec *, struct data **);
 unsigned user_func_ctlinfo(struct exec *, struct data **);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* MIDISH_USER_H */
