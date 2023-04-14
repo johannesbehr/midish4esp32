@@ -663,11 +663,17 @@ mididev_attach(unsigned unit, char *path, unsigned mode)
 		return 0;
 	}
 #if defined(USE_SNDIO)
+  log_puts("USE_SNDIO\n");
 	dev = sndio_new(path, mode);
 #elif defined(USE_ALSA)
+  log_puts("USE_ALSA\n");
 	dev = alsa_new(path, mode);
-#else
+#elif defined(USE_RAW)
+  log_puts("USE_RAW\n");
 	dev = raw_new(path, mode);
+#else
+  log_puts("Desp\n");
+	dev = desp_new(path, mode);
 #endif
 	if (dev == NULL)
 		return 0;

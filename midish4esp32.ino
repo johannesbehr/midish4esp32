@@ -22,15 +22,46 @@
 
 #include "user.h" 
 
+
+#define RXD2 16
+#define TXD2 17
+
 void setup() {
-  // Set MIDI baud rate:
-  //Serial.begin(31250);
+
+  // Set MIDI baud rate on Serial 2
+  Serial2.begin(31250, SERIAL_8N1, RXD2, TXD2);
+
   Serial.begin(115200);
   Serial.write("midish4esp32 first Version\r\n");
- 
+
+  playHello();
+
   unsigned exitcode = user_mainloop();
   Serial.write("midishEsp32 exit.\r\n");
   while(true);
+}
+
+#define NOTE_C1 0x3C
+#define NOTE_D1 0x3E
+#define NOTE_E1 0x40
+#define NOTE_F1 0x41
+#define NOTE_G1 0x43
+#define NOTE_A1 0x45
+#define NOTE_H1 0x47
+#define NOTE_C2 0x48
+
+void playHello(){
+  play(NOTE_C1);
+  play(NOTE_D1);
+  play(NOTE_E1);
+  play(NOTE_F1);
+  play(NOTE_G1);
+}
+
+void play(int note){
+    noteOn(0x90, note, 0x45);
+    delay(100);
+    noteOn(0x90, note, 0x00);
 }
 
 void loop() {
@@ -48,7 +79,7 @@ void loop() {
 // plays a MIDI note. Doesn't check to see that cmd is greater than 127, or that
 // data values are less than 127:
 void noteOn(int cmd, int pitch, int velocity) {
-  Serial.write(cmd);
-  Serial.write(pitch);
-  Serial.write(velocity);
+  Serial2.write(cmd);
+  Serial2.write(pitch);
+  Serial2.write(velocity);
 }
