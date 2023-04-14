@@ -92,12 +92,14 @@ raw_open(struct mididev *addr)
 		panic();
 		mode = 0;
 	}
+  /*
 	dev->fd = open(dev->path, mode, 0666);
 	if (dev->fd < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;
 		return;
-	}
+	}*/
+
 }
 
 void
@@ -117,7 +119,10 @@ raw_read(struct mididev *addr, unsigned char *buf, unsigned count)
 	struct raw *dev = (struct raw *)addr;
 	ssize_t res;
 
-	res = read(dev->fd, buf, count);
+	//res = read(dev->fd, buf, count);
+  res = SerialPort2.read( buf, count);
+
+
 	if (res < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;
@@ -132,7 +137,9 @@ raw_write(struct mididev *addr, unsigned char *buf, unsigned count)
 	struct raw *dev = (struct raw *)addr;
 	ssize_t res;
 
-	res = write(dev->fd, buf, count);
+	//res = write(dev->fd, buf, count);
+  res = SerialPort2.write(buf,count);
+
 	if (res < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;

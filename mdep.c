@@ -123,7 +123,7 @@ mux_mdep_open(void)
 		log_perror("mux_mdep_open: sigprocmask");
 		exit(1);
 	}
-	if (clock_gettime(CLOCK_MONOTONIC, &ts_last) < 0) {
+	if (clock_gettime(CLOCK_REALTIME, &ts_last) < 0) {
 		log_perror("mux_mdep_open: clock_gettime");
 		exit(1);
 	}
@@ -249,7 +249,7 @@ mux_mdep_wait(int docons)
 		}
 	}*/
 	if (mux_isopen) {
-		if (clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
+		if (clock_gettime(CLOCK_REALTIME, &ts) < 0) {
 			log_perror("mux_mdep_wait: clock_gettime");
 			panic();
 		}
@@ -268,7 +268,7 @@ mux_mdep_wait(int docons)
 			} else {
 				// delta is too large (eg. the program was
 				// suspended and then resumed), just ignore it
-				log_puts("ignored huge clock delta\n");
+				//log_puts("ignored huge clock delta\n");
 			}
 		}
 	}
@@ -315,7 +315,7 @@ mux_sleep(unsigned millisecs)
 	int res, delta_msec;
 	struct timespec ts;
 
-	if (clock_gettime(CLOCK_MONOTONIC, &ts_last) < 0) {
+	if (clock_gettime(CLOCK_REALTIME, &ts_last) < 0) {
 		log_perror("mux_sleep: clock_gettime");
 		exit(1);
 	}
@@ -335,11 +335,11 @@ mux_sleep(unsigned millisecs)
 		res = poll(NULL, 0, delta_msec);
 		if (res >= 0)
 			break;
-		if (errno != EINTR) {
+/*		if (errno != EINTR) {
 			log_perror("mux_sleep: poll");
 			exit(1);
-		}
-		if (clock_gettime(CLOCK_MONOTONIC, &ts_last) < 0) {
+		}*/
+		if (clock_gettime(CLOCK_REALTIME, &ts_last) < 0) {
 			log_perror("mux_sleep: clock_gettime");
 			exit(1);
 		}
