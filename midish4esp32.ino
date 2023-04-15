@@ -21,21 +21,30 @@
 */
 
 #include "user.h" 
-
+#include "mdep_desp.h"
 
 #define RXD2 16
 #define TXD2 17
 
+size_t serial2Write(const char *buffer, size_t size){ 
+  return(Serial2.write(buffer, size));
+}
+
+size_t serial2ReadBytes( char *buffer, size_t length){
+  return(Serial2.readBytes(buffer, length));
+}
+
 void setup() {
 
-  // Set MIDI baud rate on Serial 2
+  // Set MIDI baud rate on Serial 2 and register Device in Midish
   Serial2.begin(31250, SERIAL_8N1, RXD2, TXD2);
+  mdep_desp_register(&serial2Write, &serial2ReadBytes);
 
   Serial.begin(115200);
   Serial.write("midish4esp32 first Version\r\n");
 
   playHello();
-
+  
   unsigned exitcode = user_mainloop();
   Serial.write("midishEsp32 exit.\r\n");
   while(true);
@@ -75,6 +84,7 @@ void loop() {
     delay(100);
   }
 }
+
 
 // plays a MIDI note. Doesn't check to see that cmd is greater than 127, or that
 // data values are less than 127:

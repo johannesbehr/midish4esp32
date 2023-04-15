@@ -1226,6 +1226,10 @@ user_mainloop(void)
 			name_newarg("devnum",
 			name_newarg("flags", NULL)));
 
+  mididev_attach(0, "serial2", MIDIDEV_MODE_IN | MIDIDEV_MODE_OUT);
+  log_puts("SerialPort2 registered as Midi-Device 0.\n");
+
+
 	/*
 	 * run the user startup script: $HOME/.midishrc or /etc/midishrc
 	 */

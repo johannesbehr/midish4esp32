@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-//#ifdef USE_RAW
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -23,12 +22,21 @@
 #include "cons.h"
 #include "mididev.h"
 #include "str.h"
+#include "mdep_desp.h"
 
 struct desp {
 	struct mididev mididev;		/* device stuff */
 	char *path;			/* eg. "/dev/rmidi3" */
 	int fd;				/* file desc. */
 };
+
+writeDef serial2write;
+readBytesDef serial2readBytes;
+
+void mdep_desp_register(writeDef w, readBytesDef r){
+  serial2write = w;
+  serial2readBytes = r;
+}
 
 void	 desp_open(struct mididev *);
 unsigned desp_read(struct mididev *, unsigned char *, unsigned);
@@ -53,9 +61,6 @@ struct devops desp_ops = {
 struct mididev *
 desp_new(char *path, unsigned mode)
 {
-  log_puts("New desp device!\n");
-
-
 	struct desp *dev;
 
 	if (path == NULL) {
@@ -95,12 +100,14 @@ desp_open(struct mididev *addr)
 		panic();
 		mode = 0;
 	}
+  /*
 	dev->fd = open(dev->path, mode, 0666);
 	if (dev->fd < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;
 		return;
 	}
+  */
 }
 
 void
@@ -120,7 +127,7 @@ desp_read(struct mididev *addr, unsigned char *buf, unsigned count)
 	struct desp *dev = (struct desp *)addr;
 	ssize_t res;
 
-	res = read(dev->fd, buf, count);
+	res = (*serial2readBytes)(buf, count);
 	if (res < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;
@@ -135,7 +142,7 @@ desp_write(struct mididev *addr, unsigned char *buf, unsigned count)
 	struct desp *dev = (struct desp *)addr;
 	ssize_t res;
 
-	res = write(dev->fd, buf, count);
+	res = (*serial2write)(buf,count);
 	if (res < 0) {
 		log_perror(dev->path);
 		dev->mididev.eof = 1;
@@ -166,4 +173,3 @@ desp_revents(struct mididev *addr, struct pollfd *pfd)
 {
 	return pfd->revents;
 }
-//#endif

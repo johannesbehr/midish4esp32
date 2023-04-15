@@ -182,7 +182,7 @@ xmalloc(size_t size, char *tag)
 	void *p;
 
 	p = malloc(size);
-	if (p == NULL) {
+	if (p == NULL && size>0) {
 		log_puts("failed to allocate ");
 		log_putx(size);
 		log_puts(" bytes\n");
